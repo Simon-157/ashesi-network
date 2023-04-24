@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:social_network/action_services/user_service_api.dart';
 import 'package:social_network/models/profile_model.dart';
+import 'package:social_network/widgets/navbar.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -10,6 +11,33 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          title: InkWell(
+        onTap: () => {context.go('/posts')},
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Posts',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Visibility(
+              maintainAnimation: true,
+              maintainState: true,
+              maintainSize: true,
+              child: Container(
+                height: 2,
+                width: 20,
+                color: Colors.white,
+              ),
+            )
+          ],
+        ),
+      )),
       body: Column(
         children: [
           const Expanded(flex: 2, child: _TopPortion()),
@@ -35,7 +63,8 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(width: 16.0),
                       FloatingActionButton.extended(
                         onPressed: () {
-                          context.go('/profile/edit/122335');
+                          context.go(
+                              '/profile/edit/${FirebaseAuth.instance.currentUser?.uid}');
                         },
                         heroTag: 'edit',
                         elevation: 0,
@@ -100,7 +129,7 @@ class _TopPortion extends StatelessWidget {
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: NetworkImage(
-                            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80')),
+                            'https://static.vecteezy.com/system/resources/thumbnails/001/993/889/small/beautiful-latin-woman-avatar-character-icon-free-vector.jpg')),
                   ),
                 ),
               ],

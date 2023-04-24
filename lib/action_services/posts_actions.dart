@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> addPost(String title, String description) async {
   try {
     await FirebaseFirestore.instance.collection('posts').add({
+      'ownerEmail': FirebaseAuth.instance.currentUser?.email,
       'title': title,
       'description': description,
       'createdAt': FieldValue
@@ -13,6 +15,7 @@ Future<void> addPost(String title, String description) async {
     print('Error adding post: $error');
   }
 }
+
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getPostsStream() {
   return FirebaseFirestore.instance

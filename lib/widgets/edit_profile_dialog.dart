@@ -1,7 +1,52 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:social_network/action_services/user_service_api.dart';
 
-class EditProfile extends StatelessWidget {
+class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
+
+  @override
+  _EditProfileState createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+  late TextEditingController _yearGroupController = TextEditingController();
+  late TextEditingController _bestFoodController = TextEditingController();
+  late TextEditingController _bestMovieController = TextEditingController();
+  late TextEditingController _majorController = TextEditingController();
+  late TextEditingController _residenceController = TextEditingController();
+
+  updateDialog() {
+    // Create the AlertDialog
+    return AlertDialog(
+      title: const Text('Success'),
+      content: const Text('Profile updated successfully'),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            context.go('/profile/${FirebaseAuth.instance.currentUser!.uid}');
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getStudent(FirebaseAuth.instance.currentUser!.uid).then((user) {
+      setState(() {
+        _yearGroupController = TextEditingController(text: user["yearGroup"]);
+        _bestFoodController = TextEditingController(text: user["favFod"]);
+        _majorController = TextEditingController(text: user["major"]);
+        _bestMovieController = TextEditingController(text: user["best_movie"]);
+        _residenceController = TextEditingController(text: user["residence"]);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,40 +56,21 @@ class EditProfile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             // crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              CircleAvatar(
+            children: [
+              const CircleAvatar(
                 maxRadius: 60,
                 backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
+                  'https://static.vecteezy.com/system/resources/thumbnails/001/993/889/small/beautiful-latin-woman-avatar-character-icon-free-vector.jpg',
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               SizedBox(
                 width: 650,
                 child: TextField(
-                  // controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Student Name',
-                    border: OutlineInputBorder(),
-                    labelStyle:
-                        TextStyle(color: Color.fromRGBO(227, 214, 215, 1)),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color.fromRGBO(216, 202, 203, 1)),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: 650,
-                child: TextField(
-                  // controller: _nameController,
-                  decoration: InputDecoration(
+                  controller: _majorController,
+                  decoration: const InputDecoration(
                     labelText: 'Major',
                     border: OutlineInputBorder(),
                     labelStyle:
@@ -56,14 +82,14 @@ class EditProfile extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               SizedBox(
                 width: 650,
                 child: TextField(
-                  // controller: _nameController,
-                  decoration: InputDecoration(
+                  controller: _yearGroupController,
+                  decoration: const InputDecoration(
                     labelText: 'Year Group',
                     border: OutlineInputBorder(),
                     labelStyle:
@@ -75,14 +101,14 @@ class EditProfile extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               SizedBox(
                 width: 650,
                 child: TextField(
-                  // controller: _nameController,
-                  decoration: InputDecoration(
+                  controller: _bestFoodController,
+                  decoration: const InputDecoration(
                     labelText: 'Best food ',
                     border: OutlineInputBorder(),
                     labelStyle:
@@ -95,14 +121,30 @@ class EditProfile extends StatelessWidget {
                 ),
               ),
               SizedBox(
+                width: 650,
+                child: TextField(
+                  controller: _bestMovieController,
+                  decoration: const InputDecoration(
+                    labelText: 'Best MOvie ',
+                    border: OutlineInputBorder(),
+                    labelStyle:
+                        TextStyle(color: Color.fromRGBO(230, 202, 203, 1)),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromRGBO(224, 194, 195, 1)),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
                 height: 10,
               ),
               SizedBox(
                 width: 650,
                 child: TextField(
-                  // controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Best Movie ',
+                  controller: _residenceController,
+                  decoration: const InputDecoration(
+                    labelText: 'Residence ',
                     border: OutlineInputBorder(),
                     labelStyle:
                         TextStyle(color: Color.fromRGBO(227, 216, 216, 1)),
@@ -113,6 +155,40 @@ class EditProfile extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                  width: 200,
+                  height: 40,
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        Map<String, dynamic> formData = {
+                          'major': _majorController.text,
+                          'yearGroup': _yearGroupController.text,
+                          'best_food': _bestFoodController.text,
+                          'best_movie': _bestMovieController.text,
+                          // 'date_of_birth': widget.user.date_of_birth,
+                          'residence': _residenceController.text
+                        };
+                        bool status = await updateStudent(
+                            formData, FirebaseAuth.instance.currentUser!.uid);
+
+                        if (status) {
+                          // ignore: use_build_context_synchronously
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return updateDialog();
+                            },
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Update',
+                        style: TextStyle(
+                            color: Color.fromARGB(226, 245, 244, 244)),
+                      ))),
             ],
           ),
         ));

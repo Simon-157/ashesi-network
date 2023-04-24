@@ -15,15 +15,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   final _formKey = GlobalKey<FormState>();
   late String _title;
   late String _description;
-  // late String _owner;
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       widget.onSubmit(
         _title,
-        _description
-        // _owner
+        _description,
       );
 
       showDialog(

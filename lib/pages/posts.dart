@@ -5,46 +5,47 @@ import 'package:social_network/utils/posts_struct.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class UserPostsWidget extends StatelessWidget {
+  const UserPostsWidget({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Expanded(
-        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: getPostsStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
+    return Expanded(
+      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: getPostsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            final documents = snapshot.data!.docs;
+          final documents = snapshot.data!.docs;
 
-            return ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: documents.length,
-              itemBuilder: (BuildContext context, int index) {
-                final data = documents[index].data();
-                final userPost = UserPost(
-                  createdAt: data['createdAt'],
-                  title: data['title'],
-                  description: data['description'],
-                  // date: data['date'],
-                );
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: documents.length,
+            itemBuilder: (BuildContext context, int index) {
+              final data = documents[index].data();
+              final userPost = UserPost(
+                username: data['ownerEmail'],
+                createdAt: data['createdAt'],
+                title: data['title'],
+                description: data['description'],
+                // date: data['date'],
+              );
 
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    UserPostCard(userPost: userPost),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  UserPostCard(userPost: userPost),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -53,7 +54,7 @@ class UserPostsWidget extends StatelessWidget {
 class UserPostCard extends StatelessWidget {
   final UserPost userPost;
 
-  UserPostCard({required this.userPost});
+  const UserPostCard({Key? key, required this.userPost}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,19 +78,18 @@ class UserPostCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: const [
-            CircleAvatar(
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            const CircleAvatar(
               radius: 20,
               backgroundColor: Color.fromARGB(115, 116, 227, 227),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Center(
                 child: Text(
-              "Hortense",
-              style: TextStyle(
+              userPost.username,
+              style: const TextStyle(
                   color: Color.fromARGB(255, 212, 189, 189), fontSize: 15),
             )),
           ]),

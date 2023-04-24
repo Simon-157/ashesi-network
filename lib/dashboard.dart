@@ -14,9 +14,9 @@ class Dashboard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const TopBar(),
-                const SizedBox(
+              children: const [
+                TopBar(),
+                SizedBox(
                   height: 2,
                 ),
                 UserPostsWidget()

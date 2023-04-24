@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
       signInWithEmailPassword(
         _emailController.text,
         _passwordController.text,
-      ).then((value) => context.go('/'));
+      ).then((value) => context.go('/posts'));
     }
 
     print('${_emailController.text + _passwordController.text}');

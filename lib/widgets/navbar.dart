@@ -99,6 +99,7 @@ class _TopBarState extends State<TopBar> {
                     : IconButton(
                         onPressed: () {
                           signOut();
+                          context.go('/');
                         },
                         icon: const Icon(
                           Icons.logout,

@@ -20,6 +20,25 @@ Future<dynamic> registerStudent(Map<String, dynamic> formData) async {
   }
 }
 
+Future<bool> updateStudent(
+    Map<String, dynamic> formData, String userId) async {
+  final endpoint =
+      'https://us-central1-ashesi-network.cloudfunctions.net/social_network/update_student/$userId';
+  final url = Uri.parse(endpoint);
+  final headers = <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+  final body = jsonEncode(formData);
+  final response = await http.put(url, headers: headers, body: body);
+  print(response);
+  if (response.statusCode == 200) {
+    print('user updated');
+    return true;
+  } else {
+    throw Exception('Failed to submit form data');
+  }
+}
+
 Future<Map> getStudent(String userId) async {
   final apiUrl =
       'https://us-central1-ashesi-network.cloudfunctions.net/social_network/users/$userId';
